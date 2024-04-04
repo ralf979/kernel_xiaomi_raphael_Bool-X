@@ -27,6 +27,7 @@
 
 #define pr_fmt(fmt) "sbalance: " fmt
 
+#include <linux/cpufreq.h>
 #include <linux/freezer.h>
 #include <linux/irq.h>
 #include <linux/list_sort.h>
@@ -101,8 +102,7 @@ void sbalance_desc_del(struct irq_desc *desc)
 	spin_unlock(&bal_irq_lock);
 }
 
-static int bal_irq_move_node_cmp(void *priv, struct list_head *lhs_p,
-				 struct list_head *rhs_p)
+static int bal_irq_move_node_cmp(void *priv, struct list_head *lhs_p, struct list_head *rhs_p)
 {
 	const struct bal_irq *lhs = list_entry(lhs_p, typeof(*lhs), move_node);
 	const struct bal_irq *rhs = list_entry(rhs_p, typeof(*rhs), move_node);
@@ -232,8 +232,12 @@ extern void balance_irqs(void)
 	 * interrupts. That way, time spent processing each interrupt is
 	 * considered when balancing.
 	 */
-	for_each_cpu(cpu, &cpus)
-		per_cpu(cpu_cap, cpu) = cpu_rq(cpu)->cpu_capacity;
+	for_each_cpu(cpu, &cpus) {
+		struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+		per_cpu(cpu_cap, cpu) = arch_scale_cpu_capacity(NULL, cpu) *
+					policy->min / policy->cpuinfo.max_freq;
+		cpufreq_cpu_put(policy);
+	}
 
 	list_for_each_entry_rcu(bi, &bal_irq_list, node) {
 		if (!update_irq_data(bi, &cpu))
