@@ -234,7 +234,7 @@ if CPU_FREQ_GOV_SCHEDUTIL
 
 config SCHEDUTIL_UP_RATE_LIMIT_PRIME
 	int "Default up rate-limit for schedutil on prime cluster"
-	default 0
+	default 20000
 	help
 	  This sets schedutil's default frequency up rate-limit for big cluster in
 	  microseconds.
@@ -248,7 +248,7 @@ config SCHEDUTIL_DOWN_RATE_LIMIT_PRIME
 
 config SCHEDUTIL_UP_RATE_LIMIT_BIG
 	int "Default up rate-limit for schedutil on big cluster"
-	default 0
+	default 4000
 	help
 	  This sets schedutil's default frequency up rate-limit for big cluster in
 	  microseconds.
