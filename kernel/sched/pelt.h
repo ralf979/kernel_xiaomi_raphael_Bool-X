@@ -51,6 +51,8 @@ static inline u32 get_pelt_divider(struct sched_avg *avg)
  */
 #define UTIL_AVG_UNCHANGED 0x1
 
+#define cap_scale(v, s) ((v)*(s) >> SCHED_CAPACITY_SHIFT)
+
 static inline void cfs_se_util_change(struct sched_avg *avg)
 {
 	unsigned int enqueued;

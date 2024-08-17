@@ -443,6 +443,16 @@ config IRQ_TIME_ACCOUNTING
 
 	  If in doubt, say N here.
 
+config HAVE_SCHED_AVG_IRQ
+	def_bool y
+	depends on IRQ_TIME_ACCOUNTING || PARAVIRT_TIME_ACCOUNTING
+	depends on SMP
+
+config SCHED_THERMAL_PRESSURE
+	default y
+	bool "Enable periodic averaging of thermal pressure"
+	depends on SMP
+
 config SCHED_WALT
         bool "Support window based load tracking"
         depends on SMP
@@ -451,16 +461,6 @@ config SCHED_WALT
 	based set of metrics for tasks and runqueues. These metrics can be
 	used to guide task placement as well as task frequency requirements
 	for cpufreq governors.
-
-config SCHED_THERMAL_PRESSURE
-	default y
-	bool "Enable periodic averaging of thermal pressure"
-	depends on SMP
-
-config HAVE_SCHED_AVG_IRQ
-	def_bool y
-	depends on IRQ_TIME_ACCOUNTING || PARAVIRT_TIME_ACCOUNTING
-	depends on SMP
 
 config BSD_PROCESS_ACCT
 	bool "BSD Process Accounting"
@@ -760,12 +760,6 @@ config UCLAMP_BUCKETS_COUNT
 
 endmenu
 
-config UCLAMP_ASSIST
-	bool "UClamp configuration helper"
-	depends on CPUSETS && ANDROID && UCLAMP_TASK && UCLAMP_TASK_GROUP
-	help
-	  This option enabled in-kernel uclamp setting overrides.
-
 #
 # For architectures that want to enable the support for NUMA-affine scheduler
 # balancing logic:
@@ -956,12 +950,6 @@ config UCLAMP_TASK_GROUP
 	  be bigger than the corresponding clamping defined at task group level.
 
 	  If in doubt, say N.
-
-config UCLAMP_ASSIST
-	bool "UClamp configuration helper"
-	depends on ANDROID && UCLAMP_TASK && UCLAMP_TASK_GROUP
-	help
-	  This option enabled in-kernel uclamp setting overrides
 
 config CGROUP_PIDS
 	bool "PIDs controller"
